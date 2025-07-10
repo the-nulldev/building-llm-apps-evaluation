@@ -42,12 +42,11 @@ Here are the main directories and files in this repo:
 
 ```markdown
 ├── images/
-│   ├── litellm_dashboard.png
-│   ├── system_ui.png
-│   ├── qdrant_free_cluster.png
-│   ├── redis_dashboard.png
-│   ├── langfuse_dashboard.png
-│   └── ecr_push_commands.png
+│   ├── langfuse_scores_annotation.png
+│   ├── feedback_scores_in_ui.png
+│   ├── trace_details.png
+│   ├── 
+│   └── traces.png
 ├── tasks/
 │   ├── task_1.md
 │   ├── task_2.md
