@@ -67,7 +67,7 @@ Here are the main directories and files in this repo:
 
 ## **Tasks**
 
-The project is divided into various tasks that you need to complete. The tasks are located in the tasks folder of the repository. Each task includes all the necessary objectives, suggested development steps, deliverables, and useful resources. Here's a brief overview of each task:
+The project is divided into various tasks that you need to complete. The tasks are located in the [tasks](./tasks) folder of the repository. Each task includes all the necessary objectives, suggested development steps, deliverables, and useful resources. Here's a brief overview of each task:
 
 - **Task One — Introduction and Setup:** Set up Langfuse, Qdrant vector store, and API keys for the project.
 - **Task Two — Monitoring:** Collect logs and metrics via Langfuse to understand how the application is performing.
@@ -85,7 +85,7 @@ Each task contains a set of deliverables that bring you close to achieving the f
 
 ## **Contributing**
 
-All discussions and bug reports must be done via GitHub Issues or Discord, while code review is done via GitHub Pull Requests. For more information, see the CONTRIBUTING.md file.
+All discussions and bug reports must be done via GitHub Issues or Discord, while code review is done via GitHub Pull Requests. For more information, see the [CONTRIBUTING.md](./CONTRIBUTING.md) file.
 
 ### Deliverables
 
@@ -99,7 +99,7 @@ GitHub repo with:
 Fork → Clone → Branch → Implement → PR → Review
 
 - Fork this repo to your own GitHub account.
-- Create a new branch for each task (e.g., task-1) if applicable (if there is any code that has to be implemented).
+- Create a new branch for each task (ensure to use descriptive names) if applicable (if there is any code that has to be implemented).
 - Implement the solution based on the task descriptions.
 - Push the branch to the forked repo.
 - Create a Pull Request from the fork back to the main repo.

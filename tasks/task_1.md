@@ -6,7 +6,7 @@
 - [Development Steps](#development-steps)
 - [Deliverables](#deliverables)
 - [Useful Resources](#useful-resources)
-    - [Topics](#topics)
+    - [Topics](#topics-and-projects)
     - [Docs](#docs)
 
 ### Description
@@ -104,8 +104,10 @@ At this point, your environment should be set up and ready for the rest of the p
 
 ### **Useful Resources**
 
-### **Topics**
+### **Topics and Projects**
 
+- [Introduction to LangChain](https://hyperskill.org/projects/514)
+- [Building the naive RAG](https://hyperskill.org/projects/518)
 - [Overview of Langfuse](https://hyperskill.org/learn/step/52531).
 - [Further steps of Langfuse](https://hyperskill.org/learn/step/52629).
 

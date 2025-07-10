@@ -7,7 +7,7 @@
 - [Development Steps](#development-steps)
 - [Deliverables](#deliverables)
 - [Useful Resources](#useful-resources)
-    - [Topics and Projects](#topics-and-projects)
+    - [Topics and Projects](#topics)
     - [Docs](#docs)
 
 ### Description
@@ -114,9 +114,7 @@ Your code should now integrate Langfuse monitoring using both the `observe` deco
 
 ### **Useful Resources**
 
-### **Topics and Projects**
-
-- [Introduction to LangChain](https://hyperskill.org/projects/514)
+### **Topics**
 - [Overview of Langfuse](https://hyperskill.org/learn/step/52531).
 - [Further steps of Langfuse](https://hyperskill.org/learn/step/52629).
 
