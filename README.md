@@ -90,7 +90,6 @@ All discussions and bug reports must be done via GitHub Issues or Discord, while
 GitHub repo with:
 
 - Final code solution in the `main` branch.
-- A curated golden dataset: `datasets/golden_dataset.json`.
 - At least three merged pull requests.
 
 ## **The Flow**
