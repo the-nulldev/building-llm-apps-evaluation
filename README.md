@@ -70,7 +70,7 @@ The project is divided into various tasks that you need to complete. The tasks a
 - **Task One — Introduction and Setup:** Set up Langfuse, Qdrant vector store, and API keys for the project.
 - **Task Two — Monitoring:** Collect logs and metrics via Langfuse to understand how the application is performing.
 - **Task Three — User feedback**: Collect user feedback to understand how your application is performing.
-- **Task Four  — Annotation**: Use the Langfuse UI to annotate traces. Useful for expert evaluation of your LLM application and when curating a [golden dataset](https://www.dremio.com/wiki/golden-dataset/) (for evals needing the ground truth).
+- **Task Four  — Annotation**: Use the Langfuse UI to annotate traces. Useful for expert evaluation of your LLM application.
 - **Task Five — Model-based evaluation**: Use Ragas to run model-based evaluation.
 
 ## **Useful Resources**
