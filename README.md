@@ -2,18 +2,18 @@
 
 ## Table of Contents
 
-- Introduction
-- Learning Outcomes
-- Project Structure
-- Tasks
+- [Introduction](#introduction)
+- [Learning Outcomes](#learning-outcomes)
+- [Project Structure](#project-structure)
+- [Tasks](#tasks)
     - Task One — Introduction and Setup
     - Task Two — Tracing and Monitoring
     - Task Three — Collecting User Feedback
     - Task Four — Annotation
     - Task Five — Model-based evaluation
-- Deliverables
-- Useful Resources
-- Contributing
+- [Deliverables](#deliverables)
+- [Useful Resources](#useful-resources)
+- [Contributing](#contributing)
 
 ## **Introduction**
 
@@ -45,7 +45,9 @@ Here are the main directories and files in this repo:
 │   ├── langfuse_scores_annotation.png
 │   ├── feedback_scores_in_ui.png
 │   ├── trace_details.png
-│   ├── 
+│   ├── eval_scores.png
+│   ├── setting_up_an_evaluator.png
+│   ├── variable_mapping.png
 │   └── traces.png
 ├── tasks/
 │   ├── task_1.md
