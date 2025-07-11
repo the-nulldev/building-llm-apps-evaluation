@@ -5,7 +5,7 @@ import sys
 import dotenv
 from langchain_community.docstore.document import Document
 from langchain_core.messages import SystemMessage, HumanMessage
-from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate
+from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate, PromptTemplate
 from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
@@ -179,21 +179,24 @@ def main():
         ]
     )
 
-    goodbye_prompt = """
-            You have been helping the user with smartphone features and comparisons. 
+    goodbye_message = """
+            You have been helping the user: {user_id} with smartphone features and comparisons. 
             Now, generate a nice goodbye message ~50 words for the user and thank them for their feedback.
     """
+    goodbye_prompt = PromptTemplate.from_template(
+        goodbye_message
+    )
 
     chain = prompt | llm_with_tools
+    goodbye_chain = goodbye_prompt | llm
     conversation = []
 
     try:
         print("Welcome to the Smartphone Assistant! I can help you with smartphone features and comparisons.")
         while True:
             user_input = input("User: ").strip()
-
             if user_input.lower() in ["exit", "quit", "bye", "end"]:
-                goodbye_message = llm.invoke(goodbye_prompt)
+                goodbye_message = goodbye_chain.invoke({"user_id": "HyperUser"})
                 print(f"System: {goodbye_message.content}")
                 break
 
