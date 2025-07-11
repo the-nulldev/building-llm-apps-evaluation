@@ -189,7 +189,7 @@ def main():
     goodbye_message = """
             You have been helping the user: {user_id} with smartphone features and comparisons. 
             Generate a short friendly goodbye message for the user and also thank them for their feedback.
-            (note tht you've already been helping the user with smartphone features and comparisons, so do not repeat that or greet them again)
+            (note that you've already been helping the user with smartphone features and comparisons, so do not repeat that or greet them again)
     """
     goodbye_prompt = PromptTemplate.from_template(
         goodbye_message
