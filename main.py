@@ -11,9 +11,13 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams
+import uuid
 
 # Load environment variables from .env file
 dotenv.load_dotenv()
+
+users = ["James", "George", "Mike", "Sherlock"]
+user_id = users[uuid.uuid4().int % len(users)]
 
 # Initialize the LLM with OpenAI API credentials (substitute for other models)
 llm = ChatOpenAI(
@@ -184,7 +188,8 @@ def main():
 
     goodbye_message = """
             You have been helping the user: {user_id} with smartphone features and comparisons. 
-            Now, generate a nice goodbye message ~50 words for the user and thank them for their feedback.
+            Generate a short friendly goodbye message for the user and also thank them for their feedback.
+            (note tht you've already been helping the user with smartphone features and comparisons, so do not repeat that or greet them again)
     """
     goodbye_prompt = PromptTemplate.from_template(
         goodbye_message
@@ -199,13 +204,13 @@ def main():
         while True:
             user_input = input("User: ").strip()
             if user_input.lower() in ["exit", "quit", "bye", "end"]:
-                goodbye_message = goodbye_chain.invoke({"user_id": "HyperUser"})
+                goodbye_message = goodbye_chain.invoke({"user_id": user_id})
                 print(f"System: {goodbye_message.content}")
                 break
 
             conversation.append(HumanMessage(user_input))
 
-            tool_calls = chain.invoke({"user_id": "HyperUser", "user_input": user_input, "conversation": conversation})
+            tool_calls = chain.invoke({"user_id": user_id, "user_input": user_input, "conversation": conversation})
 
             if not tool_calls.tool_calls:
                 conversation.append(tool_calls)
@@ -215,7 +220,7 @@ def main():
                 tool_message = smartphone_info_tool.invoke(tool_call)
                 conversation.append(tool_message)
 
-            response = chain.invoke({"user_id": "HyperUser", "user_input": user_input, "conversation": conversation})
+            response = chain.invoke({"user_id": user_id, "user_input": user_input, "conversation": conversation})
 
             print(f"System: {response.content}")
             conversation.append(response)
