@@ -170,12 +170,15 @@ def main():
          Clearly state why this phone is a good option, considering these features, but always clarify with the user on what they are looking for.     
          Remember you can check if a product is in stock using context but you can NEVER help with queries related to ordering, support, or others. 
          You can only assist with smartphone recommendations and comparisons ONLY! 
+         
+        Current user: {user_id}
+        Current question: {user_input}
     """
 
     prompt = ChatPromptTemplate.from_messages(
         [
             (SystemMessage(system_prompt)),
-            MessagesPlaceholder(variable_name="conversation"),
+            MessagesPlaceholder(variable_name="conversation")
         ]
     )
 
@@ -202,7 +205,7 @@ def main():
 
             conversation.append(HumanMessage(user_input))
 
-            tool_calls = chain.invoke({"conversation": conversation})
+            tool_calls = chain.invoke({"user_id": "HyperUser", "user_input": user_input, "conversation": conversation})
 
             if not tool_calls.tool_calls:
                 conversation.append(tool_calls)
@@ -212,7 +215,7 @@ def main():
                 tool_message = smartphone_info_tool.invoke(tool_call)
                 conversation.append(tool_message)
 
-            response = chain.invoke({"conversation": conversation})
+            response = chain.invoke({"user_id": "HyperUser", "user_input": user_input, "conversation": conversation})
 
             print(f"System: {response.content}")
             conversation.append(response)
