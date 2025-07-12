@@ -39,7 +39,7 @@ Next, you need to ensure that Qdrant is set up and running. But before that, ens
 
 ```bash
 # if you use PowerShell as your shell, replace backslashes (\) with backticks (`) as line seperators
-docker run --restart always -p 6333:6333 -p 6334:6334 \
+docker run --restart always -d -p 6333:6333 -p 6334:6334 \
     -v "$(pwd)/qdrant_storage:/qdrant/storage:z" \
     qdrant/qdrant 
 ```
