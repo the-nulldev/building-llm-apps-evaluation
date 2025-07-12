@@ -147,6 +147,27 @@ def smartphone_info_tool(model: str) -> str:
 
 
 # ---------------------------
+# Tool Call Handling and Response Generation
+# ---------------------------
+def generate_context(llm_tools):
+    """
+    Process tool calls from the language model and collect their responses.
+
+    :param
+        llm_with_tools: The language model instance with bound tools.
+
+    :returns
+        Toolresponse
+    """
+
+    # Process each tool call based on its name
+    for tool_call in llm_tools.tool_calls:
+        if tool_call["name"] == "SmartphoneInfo":
+            tool_response = smartphone_info_tool.invoke(tool_call).content
+            return tool_response
+    return ""
+
+# ---------------------------
 # Main Conversation Loop
 # ---------------------------
 def main():
@@ -156,7 +177,7 @@ def main():
     # Bind the tools to the language model instance
     llm_with_tools = llm.bind_tools(tools)
 
-    system_prompt = """
+    review_system_prompt = """
          You are an expert AI assistant dedicated to helping customers choose the best smartphone from our product catalog.  
          Your sole focus is to provide detailed information about smartphone features and perform comparisons.     
          DO NOT assist with ordering, returns, or general customer support.     
@@ -179,12 +200,28 @@ def main():
         Current question: {user_input}
     """
 
-    prompt = ChatPromptTemplate.from_messages(
+    context_system_prompt = """
+        You're part of a smartphone recommendation system. You work is to use the SmartphoneInfo tool to retrieve information about smartphones based on user queries.
+          - If the user requests specs/comparisons/recommendations for a model explicitly mentioned in chat or can be inferred from the conversation history, call SmartphoneInfo(model)
+          - If the user asks a general question, do nothing. 
+        Do not guess or recommend a model from internal knowledge; the model name must be clear from the chat history or user input. 
+        Current question: {user_input}
+    """
+
+    context_prompt = ChatPromptTemplate.from_messages(
         [
-            (SystemMessage(system_prompt)),
+            (SystemMessage(context_system_prompt)),
             MessagesPlaceholder(variable_name="conversation")
         ]
     )
+
+    review_prompt = ChatPromptTemplate.from_messages(
+        [
+            (SystemMessage(review_system_prompt)),
+            MessagesPlaceholder(variable_name="conversation")
+        ]
+    )
+
 
     goodbye_message = """
             You have been helping the user: {user_id} with smartphone features and comparisons. 
@@ -195,7 +232,9 @@ def main():
         goodbye_message
     )
 
-    chain = prompt | llm_with_tools
+    context_chain = context_prompt | llm_with_tools | generate_context
+    review_chain = review_prompt | llm
+
     goodbye_chain = goodbye_prompt | llm
     conversation = []
 
@@ -210,17 +249,10 @@ def main():
 
             conversation.append(HumanMessage(user_input))
 
-            tool_calls = chain.invoke({"user_id": user_id, "user_input": user_input, "conversation": conversation})
+            context = context_chain.invoke({"user_input": user_input, "conversation": conversation})
+            conversation.append(context)
 
-            if not tool_calls.tool_calls:
-                conversation.append(tool_calls)
-
-            conversation.append(tool_calls)
-            for tool_call in tool_calls.tool_calls:
-                tool_message = smartphone_info_tool.invoke(tool_call)
-                conversation.append(tool_message)
-
-            response = chain.invoke({"user_id": user_id, "user_input": user_input, "conversation": conversation})
+            response = review_chain.invoke({"user_id": user_id, "user_input": user_input, "conversation": conversation})
 
             print(f"System: {response.content}")
             conversation.append(response)
