@@ -39,9 +39,9 @@ Next, you need to ensure that Qdrant is set up and running. But before that, ens
 
 ```bash
 # if you use PowerShell as your shell, replace backslashes (\) with backticks (`) as line seperators
-docker run -p 6333:6333 -p 6334:6334 \
+docker run --restart always -p 6333:6333 -p 6334:6334 \
     -v "$(pwd)/qdrant_storage:/qdrant/storage:z" \
-    qdrant/qdrant
+    qdrant/qdrant 
 ```
 
 You may have issues if you run this command in the same folder as the `main.py` file. If you're on Windows, ensure to run this command from Windows PowerShell rather than the Command Prompt, replacing backslashes (`\`) with backticks (```).
