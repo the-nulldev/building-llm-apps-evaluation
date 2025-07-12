@@ -13,7 +13,7 @@
 
 We are going to use various tools in this project. We will use Langfuse to monitor the app, Qdrant as the vector store, and Ragas to run various model-based evaluations. [**Langfuse**](https://langfuse.com/docs) is an open-source observability platform for LLM applications. It allows you to monitor, evaluate, and debug your LLM applications. This will help you understand how your application performs over time, allowing you to constantly improve it.
 
-In this task, the main objective is to familiarize yourself with the existing code, ensure that the tools are set up and configured, and that the application works as expected. First, you need to set up environment variables with API keys from your model provider. Next, ensure that Qdrant is up and running. Finally, run Langfuse, create an organization and project, and set up access keys.
+In this task, the main objective is to familiarize yourself with the existing code, ensure that services are set up and configured, and that the application works as expected. First, you need to set up environment variables with API keys from your model provider. Next, ensure that Qdrant is up and running. Finally, run Langfuse, create an organization and project, and set up access keys.
 
 ### Development Steps
 
