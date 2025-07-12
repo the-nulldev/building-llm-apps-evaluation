@@ -184,7 +184,7 @@ def main():
     # Bind the tools to the language model instance
     llm_with_tools = llm.bind_tools(tools)
 
-    context_prompt = """
+    context_system_prompt = """
         You're part of a smartphone recommendation system. You work is to use the SmartphoneInfo tool to retrieve information about smartphones based on user queries.
           - If the user requests specs/comparisons/recommendations for a model explicitly mentioned in chat or can be inferred from the conversation history, call SmartphoneInfo(model)
           - If multiple models are mentioned or from the conversation history, you must call SmartphoneInfo for each model separately.
@@ -194,7 +194,7 @@ def main():
         Current question: {user_input}
     """
 
-    review_prompt = """
+    review_system_prompt = """
         You are an expert AI assistant helping customers pick the best smartphone from our catalog. Follow these rules strictly:
         
         1. Focus solely on concise (under 100 words), human-like, personalized reviews/comparisons of models named in the user’s query or provided context.
@@ -213,27 +213,29 @@ def main():
         Current question: {user_input}
     """
 
+
+    goodbye_system_prompt = """
+        You have been helping the user: {user_id} with smartphone features and comparisons. 
+        Generate a short friendly goodbye message for the user and also thank them for their feedback.
+        (note that you've already been helping the user with smartphone features and comparisons, so do not repeat that or greet them again)
+    """
+
     context_prompt = ChatPromptTemplate.from_messages(
         [
-            (SystemMessage(context_prompt)),
+            (SystemMessage(context_system_prompt)),
             MessagesPlaceholder(variable_name="conversation")
         ]
     )
 
     review_prompt = ChatPromptTemplate.from_messages(
         [
-            (SystemMessage(review_prompt)),
+            (SystemMessage(review_system_prompt)),
             MessagesPlaceholder(variable_name="conversation")
         ]
     )
 
-    goodbye_message = """
-        You have been helping the user: {user_id} with smartphone features and comparisons. 
-        Generate a short friendly goodbye message for the user and also thank them for their feedback.
-        (note that you've already been helping the user with smartphone features and comparisons, so do not repeat that or greet them again)
-    """
     goodbye_prompt = PromptTemplate.from_template(
-        goodbye_message
+        goodbye_system_prompt
     )
 
     context_chain = context_prompt | llm_with_tools | generate_context
