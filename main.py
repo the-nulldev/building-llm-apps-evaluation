@@ -34,6 +34,8 @@ embeddings_model = OpenAIEmbeddings(
     show_progress_bar=True,
 )
 
+# Initialize conversation history
+conversation = []
 
 # ---------------------------
 # Load JSON Data and Build Qdrant Vector Store
@@ -149,6 +151,7 @@ def smartphone_info_tool(model: str) -> str:
 # ---------------------------
 # Tool Call Handling and Response Generation
 # ---------------------------
+
 def generate_context(llm_tools):
     """
     Process tool calls from the language model and collect their responses.
@@ -160,12 +163,16 @@ def generate_context(llm_tools):
         Toolresponse
     """
 
+    conversation.append(llm_tools)
+    responses = []
+
     # Process each tool call based on its name
+
     for tool_call in llm_tools.tool_calls:
         if tool_call["name"] == "SmartphoneInfo":
-            tool_response = smartphone_info_tool.invoke(tool_call).content
-            return tool_response
-    return ""
+            tool_response = smartphone_info_tool.invoke(tool_call)
+            responses.append(tool_response)
+    return responses
 
 # ---------------------------
 # Main Conversation Loop
@@ -176,6 +183,16 @@ def main():
 
     # Bind the tools to the language model instance
     llm_with_tools = llm.bind_tools(tools)
+
+    context_system_prompt = """
+        You're part of a smartphone recommendation system. You work is to use the SmartphoneInfo tool to retrieve information about smartphones based on user queries.
+          - If the user requests specs/comparisons/recommendations for a model explicitly mentioned in chat or can be inferred from the conversation history, call SmartphoneInfo(model)
+          - If multiple models are mentioned or from the conversation history, you must call SmartphoneInfo for each model separately.
+          - If the user asks a general question, do nothing. 
+        Do not guess or recommend a model from internal knowledge; the model name must be clear from the chat history or user input. 
+        
+        Current question: {user_input}
+    """
 
     review_system_prompt = """
          You are an expert AI assistant dedicated to helping customers choose the best smartphone from our product catalog.  
@@ -200,14 +217,6 @@ def main():
         Current question: {user_input}
     """
 
-    context_system_prompt = """
-        You're part of a smartphone recommendation system. You work is to use the SmartphoneInfo tool to retrieve information about smartphones based on user queries.
-          - If the user requests specs/comparisons/recommendations for a model explicitly mentioned in chat or can be inferred from the conversation history, call SmartphoneInfo(model)
-          - If the user asks a general question, do nothing. 
-        Do not guess or recommend a model from internal knowledge; the model name must be clear from the chat history or user input. 
-        Current question: {user_input}
-    """
-
     context_prompt = ChatPromptTemplate.from_messages(
         [
             (SystemMessage(context_system_prompt)),
@@ -222,11 +231,10 @@ def main():
         ]
     )
 
-
     goodbye_message = """
-            You have been helping the user: {user_id} with smartphone features and comparisons. 
-            Generate a short friendly goodbye message for the user and also thank them for their feedback.
-            (note that you've already been helping the user with smartphone features and comparisons, so do not repeat that or greet them again)
+        You have been helping the user: {user_id} with smartphone features and comparisons. 
+        Generate a short friendly goodbye message for the user and also thank them for their feedback.
+        (note that you've already been helping the user with smartphone features and comparisons, so do not repeat that or greet them again)
     """
     goodbye_prompt = PromptTemplate.from_template(
         goodbye_message
@@ -236,7 +244,6 @@ def main():
     review_chain = review_prompt | llm
 
     goodbye_chain = goodbye_prompt | llm
-    conversation = []
 
     try:
         print("Welcome to the Smartphone Assistant! I can help you with smartphone features and comparisons.")
@@ -249,8 +256,10 @@ def main():
 
             conversation.append(HumanMessage(user_input))
 
-            context = context_chain.invoke({"user_input": user_input, "conversation": conversation})
-            conversation.append(context)
+            contexts = context_chain.invoke({"user_input": user_input, "conversation": conversation})
+
+            for context in contexts:
+                conversation.append(context)
 
             response = review_chain.invoke({"user_id": user_id, "user_input": user_input, "conversation": conversation})
 
