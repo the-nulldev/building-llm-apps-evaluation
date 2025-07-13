@@ -174,7 +174,8 @@ def generate_context(ai_message: AIMessage) -> dict:
         )
 
     try:
-        # Process each tool call, invoke the appropriate tool, and create a ToolMessage
+        # Process each tool call, invoke the appropriate tool, and append the result to the conversation
+        # a message with tool calls is expected to be followed by tool responses
         for tool_call in ai_message.tool_calls:
             if tool_call["name"] == "SmartphoneInfo":
                 tool_output = smartphone_info_tool.invoke(tool_call)
