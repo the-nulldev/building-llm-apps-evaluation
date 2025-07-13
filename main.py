@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import uuid
 
 import dotenv
 from langchain_community.docstore.document import Document
@@ -11,7 +12,6 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams
-import uuid
 
 # Load environment variables from .env file
 dotenv.load_dotenv()
@@ -36,6 +36,7 @@ embeddings_model = OpenAIEmbeddings(
 
 # Initialize conversation history
 conversation = []
+
 
 # ---------------------------
 # Load JSON Data and Build Qdrant Vector Store
@@ -160,19 +161,23 @@ def generate_context(llm_tools):
         llm_with_tools: The language model instance with bound tools.
 
     :returns
-        Toolresponse
+        A dictionary containing the responses from the invoked tools.
     """
 
-    conversation.append(llm_tools)
-    responses = []
+    try:
+        conversation.append(llm_tools)
+        responses = {"tool_responses": []}
 
-    # Process each tool call based on its name
+        # Process each tool call based on its name, invoke the appropriate tool, and collect responses
+        for tool_call in llm_tools.tool_calls:
+            if tool_call["name"] == "SmartphoneInfo":
+                tool_response = smartphone_info_tool.invoke(tool_call)
+                responses["tool_responses"].append(tool_response)
+        return responses
+    except Exception as e:
+        print(f"An error occurred while processing tool calls: {e}")
+        return {"tool_responses": []}
 
-    for tool_call in llm_tools.tool_calls:
-        if tool_call["name"] == "SmartphoneInfo":
-            tool_response = smartphone_info_tool.invoke(tool_call)
-            responses.append(tool_response)
-    return responses
 
 # ---------------------------
 # Main Conversation Loop
@@ -212,7 +217,6 @@ def main():
         Current user: {user_id}
         Current question: {user_input}
     """
-
 
     goodbye_system_prompt = """
         You have been helping the user: {user_id} with smartphone features and comparisons. 
@@ -256,8 +260,11 @@ def main():
 
             contexts = context_chain.invoke({"user_input": user_input, "conversation": conversation})
 
-            for context in contexts:
-                conversation.append(context)
+            for tool_response in contexts.get("tool_responses", []):
+                if tool_response:
+                    conversation.append(tool_response)
+            if not contexts.get("tool_responses"):
+                print("No relevant smartphone information found. Please specify a model or check our catalog.")
 
             response = review_chain.invoke({"user_id": user_id, "user_input": user_input, "conversation": conversation})
 
