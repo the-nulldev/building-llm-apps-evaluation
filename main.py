@@ -5,7 +5,7 @@ import uuid
 
 import dotenv
 from langchain_community.docstore.document import Document
-from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage, AIMessage
 from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate, PromptTemplate
 from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -152,28 +152,35 @@ def smartphone_info_tool(model: str) -> str:
 # ---------------------------
 # Tool Call Handling and Response Generation
 # ---------------------------
-
-def generate_context(llm_tools):
+def generate_context(ai_message: AIMessage) -> dict:
     """
-    Process tool calls from the language model and collect their responses.
+    Process tool calls from the language model and collect their responses as ToolMessage objects.
 
     :param
-        llm_with_tools: The language model instance with bound tools.
+        ai_message (AIMessage): The language model's output message containing tool_calls.
 
     :returns
-        A dictionary containing the responses from the invoked tools.
+        A dictionary containing a list of ToolMessage objects under the key "tool_responses".
     """
+    # construct the conversation history with the AI message containing tool calls
+    conversation.append(ai_message)
+
+    # Check if the AI message has any tool calls
+    if not hasattr(ai_message, "tool_calls") or not ai_message.tool_calls:
+        return {"tool_responses": []}
 
     try:
-        conversation.append(llm_tools)
-        responses = {"tool_responses": []}
+        tool_responses = []
 
-        # Process each tool call based on its name, invoke the appropriate tool, and collect responses
-        for tool_call in llm_tools.tool_calls:
+        # Process each tool call, invoke the appropriate tool, and create a ToolMessage
+        for tool_call in ai_message.tool_calls:
             if tool_call["name"] == "SmartphoneInfo":
-                tool_response = smartphone_info_tool.invoke(tool_call)
-                responses["tool_responses"].append(tool_response)
-        return responses
+                tool_output = smartphone_info_tool.invoke(tool_call)
+                tool_responses.append(
+                    ToolMessage(content=str(tool_output.content), tool_call_id=tool_call["id"])
+                )
+        return {"tool_responses": tool_responses}
+
     except Exception as e:
         print(f"An error occurred while processing tool calls: {e}")
         return {"tool_responses": []}
