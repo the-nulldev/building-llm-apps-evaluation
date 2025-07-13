@@ -167,23 +167,26 @@ def generate_context(ai_message: AIMessage) -> dict:
 
     # Check if the AI message has any tool calls
     if not hasattr(ai_message, "tool_calls") or not ai_message.tool_calls:
-        return {"tool_responses": []}
+        conversation.append(
+            AIMessage(
+                content="No tool calls found. Please ensure the model is configured to use tools."
+            )
+        )
 
     try:
-        tool_responses = []
-
         # Process each tool call, invoke the appropriate tool, and create a ToolMessage
         for tool_call in ai_message.tool_calls:
             if tool_call["name"] == "SmartphoneInfo":
                 tool_output = smartphone_info_tool.invoke(tool_call)
-                tool_responses.append(
-                    ToolMessage(content=str(tool_output.content), tool_call_id=tool_call["id"])
-                )
-        return {"tool_responses": tool_responses}
+                conversation.append(tool_output)
 
     except Exception as e:
         print(f"An error occurred while processing tool calls: {e}")
-        return {"tool_responses": []}
+        conversation.append(
+            AIMessage(
+                content=f"An error occurred while processing tool calls: {e}"
+            )
+        )
 
 
 # ---------------------------
@@ -265,13 +268,7 @@ def main():
 
             conversation.append(HumanMessage(user_input))
 
-            contexts = context_chain.invoke({"user_input": user_input, "conversation": conversation})
-
-            for tool_response in contexts.get("tool_responses", []):
-                if tool_response:
-                    conversation.append(tool_response)
-            if not contexts.get("tool_responses"):
-                print("No relevant smartphone information found. Please specify a model or check our catalog.")
+            context_chain.invoke({"user_input": user_input, "conversation": conversation})
 
             response = review_chain.invoke({"user_id": user_id, "user_input": user_input, "conversation": conversation})
 
