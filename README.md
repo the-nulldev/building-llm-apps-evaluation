@@ -6,11 +6,11 @@
 - [Learning Outcomes](#learning-outcomes)
 - [Project Structure](#project-structure)
 - [Tasks](#tasks)
-    - Task One — Introduction and Setup
-    - Task Two — Tracing and Monitoring
-    - Task Three — Collecting User Feedback
-    - Task Four — Annotation
-    - Task Five — Model-based evaluation
+    - [Task One — Introduction and Setup](./tasks/task_1.md)
+    - [Task Two — Tracing and Monitoring](./tasks/task_2.md)
+    - [Task Three — Collecting User Feedback](./tasks/task_3.md)
+    - [Task Four — Annotation](./tasks/task_4.md)
+    - [Task Five — Model-based evaluation](./tasks/task_5.md)
 - [Deliverables](#deliverables)
 - [Useful Resources](#useful-resources)
 - [Contributing](#contributing)
@@ -79,11 +79,11 @@ The project is divided into various tasks that you need to complete. The tasks a
 
 Each task contains a collection of resources that will be helpful for you as you solve the task. There are links to topics in Hyperskill, documentation, and other helpful tutorials that you can use. You may not always need to use all the provided resources if you're already familiar with the concepts. In addition to the provided resources, you can always discuss with others and experts. You can use various channels — GitHub Issues, GitHub Discussions, PRs, or Discord.
 
-## **Deliverables**
+## Deliverables
 
 Each task contains a set of deliverables that bring you close to achieving the final goal. The final product is a fully-monitored LLM application. You should see traces and evaluation results in Langfuse.
 
-## **Contributing**
+## Contributing
 
 All discussions and bug reports must be done via GitHub Issues or Discord, while code review is done via GitHub Pull Requests. For more information, see the [CONTRIBUTING.md](./CONTRIBUTING.md) file.
 
